@@ -1,10 +1,5 @@
-import { API_URL } from "@env";
-import axios, {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig
-} from "axios";
+import { EXPO_PUBLIC_API_URL } from "@env";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { getCalendars } from "expo-localization";
 import * as SecureStore from "expo-secure-store";
 import { authenticate, logout } from "store/slices/userSlice";
@@ -14,11 +9,9 @@ import {
   convertUTCTime,
   getExpirationDateTime
 } from "utility/helperFunctions";
-import { refrehUserTokenAsync } from "./services/Firebase";
+import { refreshUserTokenAsync } from "./services/Firebase";
 
-export async function handleRefreshTokenAsync(
-  config?: InternalAxiosRequestConfig<any>
-) {
+export async function handleRefreshTokenAsync() {
   const accessToken = await SecureStore.getItemAsync("accessToken");
   const refreshToken = await SecureStore.getItemAsync("refreshToken");
   const userId = await SecureStore.getItemAsync("userId");
@@ -35,7 +28,7 @@ export async function handleRefreshTokenAsync(
         refresh_token: refreshToken
       };
 
-      const response = await refrehUserTokenAsync(refreshTokenRequest);
+      const response = await refreshUserTokenAsync(refreshTokenRequest);
 
       if (response && response.status === 200) {
         const { timeZone: userTimezone } = getCalendars()[0];
@@ -61,17 +54,10 @@ export async function handleRefreshTokenAsync(
             localizedExpirationDateTimeString: localizedExpirationDateTimeString
           })
         );
-
-        if (config && config.headers) {
-          config.headers.Authorization = `Bearer ${newAccessToken}`;
-        }
       } else {
         store.dispatch(logout());
       }
     } else {
-      if (config && config.headers) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
       store.dispatch(
         authenticate({
           accessToken: accessToken,
@@ -80,6 +66,8 @@ export async function handleRefreshTokenAsync(
       );
       console.log("token still valid");
     }
+  } else {
+    store.dispatch(logout());
   }
 }
 
@@ -95,12 +83,16 @@ export type RequestResponse<T = any> =
 
 const httpClientFactory = async (): Promise<AxiosInstance> => {
   const instance = axios.create({
-    baseURL: API_URL
+    baseURL: EXPO_PUBLIC_API_URL
   });
 
   instance.interceptors.request.use(
     async (config) => {
-      await handleRefreshTokenAsync(config);
+      await handleRefreshTokenAsync();
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
       return config;
     },
     (error) => {

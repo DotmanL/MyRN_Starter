@@ -1,4 +1,4 @@
-import { FIREBASE_APIKEY } from "@env";
+import { EXPO_PUBLIC_FIREBASE_APIKEY } from "@env";
 import axios from "axios";
 
 interface IRefreshTokenRequest {
@@ -6,10 +6,12 @@ interface IRefreshTokenRequest {
   refresh_token: string;
 }
 
-async function refrehUserTokenAsync(refreshTokenRequest: IRefreshTokenRequest) {
+async function refreshUserTokenAsync(
+  refreshTokenRequest: IRefreshTokenRequest
+) {
   try {
     const response = await axios.post(
-      `https://securetoken.googleapis.com/v1/token?key=${FIREBASE_APIKEY}`,
+      `https://securetoken.googleapis.com/v1/token?key=${EXPO_PUBLIC_FIREBASE_APIKEY}`,
       refreshTokenRequest
     );
     return response;
@@ -19,4 +21,4 @@ async function refrehUserTokenAsync(refreshTokenRequest: IRefreshTokenRequest) {
   }
 }
 
-export { refrehUserTokenAsync };
+export { refreshUserTokenAsync };

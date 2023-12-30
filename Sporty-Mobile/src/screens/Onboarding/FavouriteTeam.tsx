@@ -18,7 +18,7 @@ import {
   View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAppDispatch, useUser } from "store/hooks";
+import { useAppDispatch } from "store/hooks";
 import { setUser } from "store/slices/userSlice";
 import { scale, screenTopMargin } from "utility/scaling";
 
@@ -26,7 +26,6 @@ function FavouriteTeam() {
   const styles = useThemedStyle(themedStyles);
   const insets = useSafeAreaInsets();
   const colours = useThemedColours();
-  const { user } = useUser();
   const dispatch = useAppDispatch();
   const [activeClubIds, setActiveClubIds] = useState<string[]>([]);
   const [isNextLoading, setIsNextLoading] = useState<boolean>(false);
@@ -77,8 +76,8 @@ function FavouriteTeam() {
   }
   const isDisabled = !(activeClubIds.length > 0);
 
-  async function updateUserStateAsync(userId: string) {
-    const userResponse = await UserService.getUserAsync(userId);
+  async function updateUserStateAsync() {
+    const userResponse = await UserService.getUserAsync();
     if (!userResponse.data || userResponse.error) {
       console.error(userResponse.error);
       return;
@@ -92,7 +91,6 @@ function FavouriteTeam() {
 
     const { data, error } =
       await OnboardingService.updateUserOnboardingStatusAsync(
-        user?.id!,
         OnboardingStatus.RegisteredClubs
       );
 
@@ -103,7 +101,7 @@ function FavouriteTeam() {
       return false;
     }
 
-    await updateUserStateAsync(user?.id!);
+    await updateUserStateAsync();
     setIsSkipLoading(false);
     return true;
   }
@@ -117,7 +115,6 @@ function FavouriteTeam() {
 
     const clubIds: string[] = activeClubIds;
     const { data, error } = await OnboardingService.createClubInterestAsync(
-      user?.id!,
       clubIds
     );
 
@@ -128,7 +125,7 @@ function FavouriteTeam() {
       return false;
     }
 
-    await updateUserStateAsync(user?.id!);
+    await updateUserStateAsync();
     setIsNextLoading(false);
     return true;
   }

@@ -1,4 +1,4 @@
-import { ANDROID_CLIENTID, IOS_CLIENTID } from "@env";
+import { EXPO_PUBLIC_ANDROID_CLIENTID, EXPO_PUBLIC_IOS_CLIENTID } from "@env";
 import { AuthenticationService } from "api/services/Authentication";
 import axios from "axios";
 import {
@@ -37,8 +37,8 @@ export const PROVIDER_ID = "google.com";
 export const useGoogleSignIn = () => {
   const [_, response, promptAsync] = Google.useAuthRequest({
     // clientId:'',
-    androidClientId: ANDROID_CLIENTID,
-    iosClientId: IOS_CLIENTID,
+    androidClientId: EXPO_PUBLIC_ANDROID_CLIENTID,
+    iosClientId: EXPO_PUBLIC_IOS_CLIENTID,
     scopes: ["profile", "email"],
     redirectUri
   });

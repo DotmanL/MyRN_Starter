@@ -1,30 +1,24 @@
 import { Request, Response } from "express";
 import { BadRequestError } from "../errors/bad-request-error";
-import { OnboardingStatus, UserSchema } from "../models/user";
 import { InterestsSchema } from "../models/interests";
-import axios from "axios";
+import { OnboardingStatus, UserSchema } from "../models/user";
+import { handleErrorResponse } from "../middlewares/error-handler";
 const admin = require("firebase-admin");
 
 //TODO: get user by user id stored in the secure store, improve this with user session data instead
 async function getUserAsync(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const user = await UserSchema.findById(id);
+    const currentUser = req.currentUser;
+
+    const user = await UserSchema.findById(currentUser!.id);
 
     if (!user) {
-      throw new BadRequestError(`No user exists with id: ${id}`);
+      throw new BadRequestError(`No user exists with id: ${currentUser!.id}`);
     }
 
     res.status(200).json(user);
   } catch (err: any) {
-    return res.status(err.statusCode || 500).json({
-      errors: [
-        {
-          msg: err.message || "Internal Server Error",
-          status: err.statusCode || 500
-        }
-      ]
-    });
+    handleErrorResponse(res, err);
   }
 }
 
@@ -32,12 +26,13 @@ async function getUserAsync(req: Request, res: Response) {
 //but user can't login as we always check our database for the user.
 async function deleteAccountAsync(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-
-    const existingUser = await UserSchema.findById(id);
+    const currentUser = req.currentUser;
+    const existingUser = await UserSchema.findById(currentUser?.id);
 
     if (!existingUser) {
-      throw new BadRequestError(`No user exists with this id:${id}`);
+      throw new BadRequestError(
+        `No user exists with this id:${currentUser?.id}`
+      );
     }
     const userInterest = await InterestsSchema.findOne({
       userId: existingUser?.id
@@ -69,14 +64,7 @@ async function deleteAccountAsync(req: Request, res: Response) {
       });
     }
   } catch (err: any) {
-    return res.status(err.statusCode || 500).json({
-      errors: [
-        {
-          msg: err.message || "Internal Server Error",
-          status: err.statusCode || 500
-        }
-      ]
-    });
+    handleErrorResponse(res, err);
   }
 }
 
@@ -104,4 +92,4 @@ export async function updateOnboardingStatusAsync(
   }
 }
 
-export { getUserAsync, deleteAccountAsync };
+export { deleteAccountAsync, getUserAsync };

@@ -6,14 +6,12 @@ import {
 import { IUser } from "interfaces/user/IUser";
 import { Status } from "./Token";
 
-async function getUserAsync(userId: string): Promise<RequestResponse<IUser>> {
-  return await getHttpClient(`api/user/getUser/${userId}`);
+async function getUserAsync(): Promise<RequestResponse<IUser>> {
+  return await getHttpClient(`api/user/getUser`);
 }
 
-async function deleteAccountAsync(
-  userId: string
-): Promise<RequestResponse<Status>> {
-  return await deleteHttpClient(`api/user/deleteAccount/${userId}`);
+async function deleteAccountAsync(): Promise<RequestResponse<Status>> {
+  return await deleteHttpClient(`api/user/deleteAccount`);
 }
 
 export const UserService = {

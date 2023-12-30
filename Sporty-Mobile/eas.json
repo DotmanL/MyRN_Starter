@@ -20,8 +20,21 @@
       }
     },
     "preview": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://sfootybackend.herokuapp.com/",
+        "EXPO_PUBLIC_ANDROID_CLIENTID": "394758804277-lpde7jlbpi1ls0evo81bpknl35opf4qe.apps.googleusercontent.com",
+        "EXPO_PUBLIC_IOS_CLIENTID": "394758804277-abqrsdrrlqri6m7ma642e1uald777a67.apps.googleusercontent.com",
+        "EXPO_PUBLIC_FIREBASE_APIKEY": "AIzaSyBlU1K-_Fq63oTrq4Kk0yunx0WHXip9DNI"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      },
       "distribution": "internal"
     },
+
     "production": {}
   },
   "submit": {

@@ -133,7 +133,7 @@ function CreateAccount(props: Props) {
   async function formSubmitted(createUser: ICreateUser) {
     const { data, error } = await handleCreateAccountAsync(createUser);
     if (error || !data) {
-      setErrorMessage(error?.data.errors[0].msg);
+      setErrorMessage(error?.data.errors[0].message);
       return false;
     }
 

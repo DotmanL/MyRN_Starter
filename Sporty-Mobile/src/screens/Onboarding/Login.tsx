@@ -98,12 +98,11 @@ function Login(props: Props) {
     const { data, error } = await AuthenticationService.loginAsync(loginUser);
 
     if (error || !data) {
-      //TODO: parse these errors better
-      if (error?.data.errors[0].msg.includes("400")) {
+      if (error?.data.errors[0].message.includes("INVALID_LOGIN_CREDENTIALS")) {
         setErrorMessage("Invalid email or password");
         return false;
       }
-      setErrorMessage(error?.data.errors[0].msg);
+      setErrorMessage(error?.data.errors[0].message);
       return false;
     }
 

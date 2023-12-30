@@ -110,17 +110,14 @@ function NewPassword(props: Props) {
   }
 
   async function formSubmitted(confirmPassword: IConfirmPassword) {
+    setErrorMessage("");
     const { data, error } = await AuthenticationService.resetPasswordAsync(
       email,
       confirmPassword.password
     );
 
     if (error || !data) {
-      if (error?.data.errors[0].msg.includes("400")) {
-        setErrorMessage("Invalid email or password");
-        return false;
-      }
-      setErrorMessage(error?.data.errors[0].msg);
+      setErrorMessage(error?.data.errors[0].message);
       return false;
     }
 

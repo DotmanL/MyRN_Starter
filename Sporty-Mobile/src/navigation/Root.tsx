@@ -1,3 +1,5 @@
+import { handleRefreshTokenAsync } from "api/httpClient";
+import UserService from "api/services/User";
 import color from "constants/color";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -11,12 +13,9 @@ import {
   useWindowDimensions
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Navigation from "./Navigation";
-import { handleRefreshTokenAsync } from "api/httpClient";
 import { useAppDispatch } from "store/hooks";
-import * as SecureStore from "expo-secure-store";
-import UserService from "api/services/User";
 import { logout, setUser } from "store/slices/userSlice";
+import Navigation from "./Navigation";
 
 function Root() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -53,18 +52,13 @@ function Root() {
           "montserratAlternates-bold": require("../../assets/fonts/MontserratAlternates-Bold.ttf")
         });
 
-        const userId = await SecureStore.getItemAsync("userId");
-        if (userId) {
-          const { data, error } = await UserService.getUserAsync(userId);
+        const { data, error } = await UserService.getUserAsync();
 
-          if (!data || error) {
-            dispatch(logout());
-            return;
-          }
-          dispatch(setUser(data));
+        if (!data || error) {
+          dispatch(logout());
+          return;
         }
-
-        //check user before handlin refresh, userId must be in storage
+        dispatch(setUser(data));
         await handleRefreshTokenAsync();
         // console.log(Date.now() - start, "(ms) app loading timing");
       } catch (e) {

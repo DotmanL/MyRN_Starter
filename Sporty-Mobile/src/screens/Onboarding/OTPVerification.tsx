@@ -73,9 +73,8 @@ function OTPVerification(props: Props) {
     const { data, error } = await TokenService.createTokenAsync(email);
 
     if (error || !data) {
-      setErrorMessage("Issues generating token");
+      setErrorMessage(error?.data.errors[0].message);
     }
-
     setNotificationMessage("You should have recieved an OTP code in your mail");
   }
 

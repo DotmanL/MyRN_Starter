@@ -88,12 +88,13 @@ function ForgotPassword(props: Props) {
   }
 
   async function formSubmitted(forgotPassword: IForgotPassword) {
+    setErrorMessage("");
     const { data, error } = await TokenService.createTokenAsync(
       forgotPassword.email
     );
 
     if (error || !data) {
-      setErrorMessage("Issues generating token");
+      setErrorMessage(error?.data.errors[0].message);
       return false;
     }
 

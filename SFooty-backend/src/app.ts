@@ -4,6 +4,7 @@ import cookiesession from "cookie-session";
 import { errorHandler } from "./middlewares/error-handler";
 // import { NotFoundError } from './errors/not-found-error';
 import cors from "cors";
+import { currentUser } from "./middlewares/current-user";
 
 const app = express();
 app.set("trust proxy", true);
@@ -16,6 +17,8 @@ app.use(
     //we are setting the secure value of sending cookie via https to be true if not in a test environment
   })
 );
+
+app.use(currentUser);
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/onboarding", require("./routes/onboarding"));
@@ -32,6 +35,7 @@ app.get("/", (req: Request, res: Response) => {
 // app.all('*', async () => {
 //   throw new NotFoundError();
 // });
-
+//NOTE: error handler must be last always
 app.use(errorHandler);
+
 export { app };

@@ -5,20 +5,19 @@ import { useThemedStyle } from "providers/ThemeProvider";
 import { ThemeColours } from "providers/ThemeTypes";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useAppDispatch, useUser } from "store/hooks";
+import { useAppDispatch } from "store/hooks";
 import { logout } from "store/slices/userSlice";
 import { scale } from "utility/scaling";
 
 function Profile() {
   const styles = useThemedStyle(themedStyles);
   const dispatch = useAppDispatch();
-  const { user } = useUser();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function handleDeleteAccountAsync() {
     setIsLoading(true);
-    const { data, error } = await UserService.deleteAccountAsync(user?.id!);
+    const { data, error } = await UserService.deleteAccountAsync();
 
     if (error || !data) {
       setErrorMessage(

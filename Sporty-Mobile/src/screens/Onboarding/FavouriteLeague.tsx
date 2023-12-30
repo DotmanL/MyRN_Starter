@@ -20,7 +20,6 @@ import {
   View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useUser } from "store/hooks";
 import { scale, screenTopMargin } from "utility/scaling";
 
 type Props = {
@@ -30,13 +29,11 @@ type Props = {
   >;
 };
 
-//TODO: add spinner on the next and skip buttons
 function FavouriteLeague(props: Props) {
   const { navigation } = props;
   const styles = useThemedStyle(themedStyles);
   const insets = useSafeAreaInsets();
   const colours = useThemedColours();
-  const { user } = useUser();
   const [activeLeagueIds, setActiveLeagueIds] = useState<string[]>([]);
   const [isNextLoading, setIsNextLoading] = useState<boolean>(false);
   const [isSkipLoading, setIsSkipLoading] = useState<boolean>(false);
@@ -132,7 +129,6 @@ function FavouriteLeague(props: Props) {
 
     const { data, error } =
       await OnboardingService.updateUserOnboardingStatusAsync(
-        user?.id!,
         OnboardingStatus.RegisteredLeagues
       );
 
@@ -157,7 +153,6 @@ function FavouriteLeague(props: Props) {
     setIsNextLoading(true);
     const leagueIds: string[] = activeLeagueIds;
     const { data, error } = await OnboardingService.createLeagueInterestAsync(
-      user?.id!,
       leagueIds
     );
 
