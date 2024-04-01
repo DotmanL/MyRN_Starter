@@ -64,8 +64,7 @@ function calculateExpirationTimeInMilliSeconds(expirationDate: string) {
 
 export function calculateExpirationTime(secondsUntilExpiry: number) {
   const currentDate = new Date();
-  const currentUtcTimestamp =
-    currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000;
+  const currentUtcTimestamp = currentDate.getTime();
   const currentUtcDate = new Date(currentUtcTimestamp);
 
   const expirationUtcTimestamp =
